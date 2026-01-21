@@ -6,22 +6,32 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net.NetworkInformation;
+using NetworkUtility.DNS;
+using FakeItEasy;
 
 namespace NetworkUtility.Tests.PingTests
 {
     public class NetworkServiceTests
     {
         private readonly NetworkService _networkService;
+        private readonly IDNS _dns; 
 
         public NetworkServiceTests()
         {
+            //Fake interface
+            _dns = A.Fake<IDNS>();
+
+
             //SUT - System Under Test
-            _networkService = new NetworkService();
+            _networkService = new NetworkService(_dns);
         }
 
         [Fact]
         public void NetworkService_SendPing_ReturnsSuccessMessage()
         {
+            //Arrange
+            //Faking the call of SendDNS method to return true
+            A.CallTo(() => _dns.SendDNS()).Returns(true);
 
             var result = _networkService.SendPing();
             // Assert
